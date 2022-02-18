@@ -20,7 +20,7 @@ function Home() {
     //             title: "Marvel",
     //             description: "This is the start of new era",
     //             completed: true,
-    //             cardImg:"https://firebasestorage.googleapis.com/v0/b/disney-clone-c7b69.appspot.com/o/movies%2F1166683.jpg?alt=media&token=1cb75c55-14e8-4f05-87bf-346c356eb890",
+    //             cardImg:"",
     //             created: Timestamp.now()
     //         })
     //     } catch (err) {

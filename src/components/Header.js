@@ -1,39 +1,91 @@
-import React from 'react';
-import styled from 'styled-components'
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { selectUserName, selectUserPhoto, setUserLogin, setSignOut } from '../features/user/userSlice';
 
 function Header() {
-    return (
-        <Nav>
-            <Logo src="/images/logo.svg" />
-            <NavMenu>
-                <a href="/">
-                    <img src="/images/home-icon.svg" alt="Home icon" />
-                    <span>HOME</span>
-                </a>
-                <a href="/">
-                    <img src="/images/search-icon.svg" alt="Home icon" />
-                    <span>SEARCH</span>
-                </a>
-                <a href="/">
-                    <img src="/images/watchlist-icon.svg" alt="Home icon" />
-                    <span>WATCHLIST</span>
-                </a>
-                <a href="/">
-                    <img src="/images/original-icon.svg" alt="Home icon" />
-                    <span>ORIGINAL</span>
-                </a>
-                <a href="/">
-                    <img src="/images/movie-icon.svg" alt="Home icon" />
-                    <span>MOVIES</span>
-                </a>
-                <a href="/">
-                    <img src="/images/series-icon.svg" alt="Home icon" />
-                    <span>SERIES</span>
-                </a>
-            </NavMenu>
-            <UserImg src="/images/user.jpg" alt="user Image"/>
-        </Nav>
-    )
+
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const userName = useSelector(selectUserName);
+	const userPhoto = useSelector(selectUserPhoto);
+
+	useEffect(() => {
+		onAuthStateChanged(auth, user => {
+			if(user) {
+				dispatch( setUserLogin ({
+					name: user.displayName,
+					email: user.email,
+					photo: user.photoURL
+				}))
+				navigate('/')
+			}
+		})
+	}, [])
+
+	const signIn = () => {
+		signInWithPopup(auth, new GoogleAuthProvider()).then((result) => {
+			let user = result.user;
+			dispatch(setUserLogin({
+				name: user.displayName,
+				email: user.email,
+				photo: user.photoURL
+			}));
+			navigate('/')
+		})
+	}
+
+	const SignOut = () => {
+		signOut(auth).then(() => {
+			dispatch(setSignOut());
+			navigate('/login')
+		})
+	}
+
+	return (
+		<Nav>
+			<Logo src="/images/logo.svg" />
+			{!userName ?
+				(
+					<LoginContainer>
+						<Login onClick={signIn}>Login</Login>
+					</LoginContainer>
+				) :
+				<>
+					<NavMenu>
+						<a href="/">
+							<img src="/images/home-icon.svg" alt="Home icon" />
+							<span>HOME</span>
+						</a>
+						<a href="/">
+							<img src="/images/search-icon.svg" alt="Home icon" />
+							<span>SEARCH</span>
+						</a>
+						<a href="/">
+							<img src="/images/watchlist-icon.svg" alt="Home icon" />
+							<span>WATCHLIST</span>
+						</a>
+						<a href="/">
+							<img src="/images/original-icon.svg" alt="Home icon" />
+							<span>ORIGINAL</span>
+						</a>
+						<a href="/">
+							<img src="/images/movie-icon.svg" alt="Home icon" />
+							<span>MOVIES</span>
+						</a>
+						<a href="/">
+							<img src="/images/series-icon.svg" alt="Home icon" />
+							<span>SERIES</span>
+						</a>
+					</NavMenu>
+					<UserImg src="/images/user.jpg" onClick={SignOut} alt="user Image" />
+				</>
+			}
+		</Nav>
+	)
 }
 
 export default Header
@@ -110,4 +162,28 @@ const UserImg = styled.img`
     border-radius:50%;
     cursor:pointer;
     margin-top:12px;
+`
+
+const LoginContainer = styled.div`
+	flex:1;
+	display:flex;
+	justify-content: flex-end;
+`
+
+const Login = styled.div`
+	border: 1px solid #f9f9f9;
+	border-radius:4px;
+	margin: 10px 10px 10px 0px;
+	padding: 12px 16px;
+	letter-spacing: 1.5px;
+	text-transform: uppercase;
+	background-color: rgba(0, 0, 0, 0.6);
+	cursor:pointer;
+	transition: all 0.2 ease 0s;
+
+	&:hover {
+		background-color: #f9f9f9;
+		color:#000;
+		border-color: transparent;
+	}
 `

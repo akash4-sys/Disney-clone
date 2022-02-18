@@ -2,7 +2,7 @@
 // do this to install firebase-tools or it will give errors
 
 import { initializeApp } from "firebase/app";
-import { onAuthStateChanged, getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from "firebase/storage";
 
@@ -22,17 +22,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 const storage = getStorage(firebaseApp);
-
-// Detect Auth state
-// onAuthStateChanged(auth, user => {
-// 	if(user != null) {
-// 		console.log('logged in');
-// 	}else{
-// 		console.log('No user');
-// 	}
-// })
-
-// signInWithPopup(auth, new GoogleAuthProvider());
 
 export { auth, storage };
 export default db;
