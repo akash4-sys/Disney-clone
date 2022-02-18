@@ -1,14 +1,52 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from "react-redux";
 import styled from 'styled-components';
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import db from '../firebase';
 import ImgSlider from './ImgSlider';
 import Viewers from './Viewers';
 import Movies from './Movies';
+import { setMovies } from "../features/movie/movieSlice";
 
 function Home() {
+
+    const dispatch = useDispatch();
+
+    // This code to add data to database as direct uploading isn't working
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault()
+    //     try {
+    //         await addDoc(collection(db, 'movies'), {
+    //             title: "Marvel",
+    //             description: "This is the start of new era",
+    //             completed: true,
+    //             cardImg:"https://firebasestorage.googleapis.com/v0/b/disney-clone-c7b69.appspot.com/o/movies%2F1166683.jpg?alt=media&token=1cb75c55-14e8-4f05-87bf-346c356eb890",
+    //             created: Timestamp.now()
+    //         })
+    //     } catch (err) {
+    //         alert(err)
+    //     }
+    // }
+
+    useEffect(() => {
+        // firebase is a real time database, it sends snapshots every time a change occurs in database
+        const q = query(collection(db, 'movies'), orderBy('created', 'desc'));
+        onSnapshot(q, (querySnapshot) => {
+            const tempMovies = querySnapshot.docs.map((doc) => {
+                // console.log(doc.data())
+                return { id: doc.id, ...doc.data() }
+            })
+            dispatch(setMovies(tempMovies));
+        });
+    }, []);
+
     return (
         <Container>
-            <ImgSlider/>
-            <Viewers/>
+            {/* <form onSubmit={handleSubmit} className='addTask' name='addTask'>
+                <button type="submit">Submit</button>
+            </form> */}
+            <ImgSlider />
+            <Viewers />
             <Movies />
         </Container>
     )

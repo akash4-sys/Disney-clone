@@ -1,47 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
+import { selectMovies } from '../features/movie/movieSlice';
+import { useSelector } from 'react-redux';
 
 function Movies() {
+
+    const movies = useSelector(selectMovies);
+    // console.log("Movies => ", movies)
+
     return (
         <Container>
             <h4>Recommended for you</h4>
             <Content>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
-                <Wrap>
-                    <img src="/images/viewers-marvel.png" alt="marvel"/>
-                </Wrap>
+                {
+                    movies && movies.map((movie) => (
+                        <Wrap key={movie.id}>
+                            <img src={movie.cardImg} alt={movie.title} />
+                        </Wrap>
+                    ))
+                }
             </Content>
         </Container>
     )
