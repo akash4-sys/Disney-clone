@@ -28,6 +28,8 @@ function Home() {
     //     }
     // }
 
+    // useEffect takes place whenever it's component is reloaded, the empty bracket
+    // defines it should reload whenever component reloads
     useEffect(() => {
         // firebase is a real time database, it sends snapshots every time a change occurs in database
         const q = query(collection(db, 'movies'), orderBy('created', 'desc'));

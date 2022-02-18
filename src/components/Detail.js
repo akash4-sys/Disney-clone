@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { useParams } from 'react-router-dom';
+import db from '../firebase';
 
 function Detail() {
+
+    const { id } = useParams();
+    const [ movie, setMovie ] = useState({});
+
+    useEffect(() => {
+        const q = query(collection(db, 'movies'), orderBy('created', 'desc'));
+        onSnapshot(q, (querySnapshot) => {
+            const Movies = querySnapshot.docs.map((doc) => {
+                return { id: doc.id, ...doc.data() }
+            })
+
+            let found = Movies.find(movie => movie.id === id);
+            setMovie(found);
+            // console.log(found)
+        });
+    }, [id]);
+
     return (
         <Container>
             <Background>
-                <img src="/images/detail.jpg" alt="sung-jin-woo"/>
+                <img src={movie.cardImg ? movie.cardImg : 'images/details.jpg'} alt="sung-jin-woo"/>
+                {/* <img src={movie.cardImg} alt="sung-jin-woo"/> */}
             </Background>
             <ImageTitle>
                 <img src="/images/viewers-marvel.png" alt="animezone"/>
@@ -30,7 +51,7 @@ function Detail() {
                 2019 / m / Family, Fantasy, kids, Animation
             </SubTitle>
             <Description>
-                This is the story of the shadow monarch
+                { movie.description ? movie.description : 'This is the story of the shadow monarch'}
             </Description>
         </Container>
     )
